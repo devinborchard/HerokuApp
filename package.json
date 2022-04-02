@@ -4,11 +4,8 @@
   "description": "Starter kit for creating React and Express apps",
   "main": "server.js",
   "scripts": {
-    "client-install": "cd client && npm install",
-    "start": "node server.js",
-    "server": "nodemon server.js",
-    "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "start": "node index.js",
+  "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "author": "Brad Traversy",
   "license": "MIT",
