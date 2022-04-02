@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
+const path = require("path");
 
 app.get('/api/customers', cors(), (req, res) => {
   const customers = [
@@ -13,14 +14,14 @@ app.get('/api/customers', cors(), (req, res) => {
   res.json(customers);
 });
 
-
+app.use(express.static(path.resolve(__dirname, '../client/build')));
 if (process.env.NODE_ENV === "production" ||
   process.env.NODE_ENV === "development" ||
   process.env.NODE_ENV === "integration") {
   app.use(express.static("client/build"));
-  const path = require("path");
+
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+    res.sendFile(path.resolve(__dirname, "../client", "build", "index.html"));
   });
 }
 
