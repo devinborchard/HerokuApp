@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import axios from 'axios';
 
 class App extends Component {
   // Initialize state
@@ -10,11 +11,24 @@ class App extends Component {
     this.getPasswords();
   }
 
-  getPasswords = () => {
-    // Get the passwords and store them in state
-    fetch('/api/passwords')
-      .then(res => res.json())
-      .then(passwords => this.setState({ passwords }));
+  getPasswords = async() => {
+    try{
+      // Get the passwords and store them in state
+      let fetchdata= {
+        method: "get",
+        baseURL: 'http://localhost:5000',
+        url: `/api/passwords`,
+        headers: {
+          
+        },
+      }
+      const response = await axios(fetchdata)
+        
+      this.setState({passwords:response.data})
+    }catch(e){
+      console.error(e)
+    }
+    
   }
 
   render() {
