@@ -7,14 +7,9 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 // Put all API endpoints under '/api'
-app.get('/api/customers', cors(), (req, res) => {
-  const customers = [
-    {id: 1, firstName: 'John', lastName: 'Doe'},
-    {id: 2, firstName: 'Brad', lastName: 'Traversy'},
-    {id: 3, firstName: 'Mary', lastName: 'Swanson'},
-  ];
-
-  res.json(customers);
+app.get('/api/passwords', (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.send([2,3,4]);
 });
 
 // The "catchall" handler: for any request that doesn't
