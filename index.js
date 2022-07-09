@@ -3,8 +3,9 @@ require("dotenv").config()
 
 const app = express();
 
-app.get('/api', (req,res) => {
-  console.log('PAYLOAD RECEIVED: ', req)
+app.post('/api', (req,res) => {
+  res.send(200)
+  console.log('PAYLOAD RECEIVED: ', req.body)
 })
 
 
