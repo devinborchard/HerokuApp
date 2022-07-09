@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.26.1",
+    "dotenv": "^16.0.1",
     "express": "^4.15.3",
     "password-generator": "^2.1.0"
   },
