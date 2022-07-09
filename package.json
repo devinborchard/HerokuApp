@@ -5,11 +5,17 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.26.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.15.3",
-    "password-generator": "^2.1.0"
+    "nodemon": "^2.0.19",
+    "password-generator": "^2.1.0",
+    "pg": "^8.7.3",
+    "sequelize": "^6.21.2",
+    "sqlite3": "^5.0.8"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   }
 }

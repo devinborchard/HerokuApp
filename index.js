@@ -1,8 +1,11 @@
 const express = require('express');
 require("dotenv").config()
+var cors = require('cors')
+
 const router = require('./routes/router.js')
 
 const app = express();
+app.use(cors())
 
 //set up for receiving JSON bodys in routes
 app.use(express.json());
