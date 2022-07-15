@@ -1,13 +1,14 @@
 
-const connectToDb = require('../DataBaseConnection/connection')
+const {getUserFromDb} = require('../DataBaseConnection/connection')
 
-const Api = async (req,res) => {
-    console.log('PAYLOAD RECEIVED: ', req.body)
-    let dbData = await connectToDb()
+
+const GetUser = async (req,res) => {
+    let dbData = await getUserFromDb(req)
     res.send({
         data: dbData
     })
 }
-
 //export function for router to send to index
-module.exports = Api;
+module.exports = {
+    GetUser
+};
