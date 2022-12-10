@@ -8,6 +8,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.15.3",
+    "nodemailer": "^6.8.0",
     "nodemon": "^2.0.19",
     "password-generator": "^2.1.0",
     "pg": "^8.7.3",

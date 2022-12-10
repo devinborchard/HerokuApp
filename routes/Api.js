@@ -1,5 +1,6 @@
 
 const {DBConnection} = require('../DataBaseConnection/DBConnection')
+const { sendNodeMailerEmail } = require('../handlers/emailHandler')
 const db = new DBConnection(process.env.DB_URI)
 
 const GetUser = async (req,res) => {
@@ -7,6 +8,16 @@ const GetUser = async (req,res) => {
     res.send({
         data: dbData
     })
+}
+
+const sendEmail = async(req, res) => {
+    let emailed = await sendNodeMailerEmail(req.body)
+    if(emailed){
+        res.sendStatus(200)
+    }else{
+        res.sendStatus(503)
+    }
+
 }
 
 const createUser = async(req, res) => {
@@ -53,6 +64,7 @@ const GetAvailability  = async (req,res) => {
 //export function for router to send to index
 module.exports = {
     GetUser,
+    sendEmail,
     GetAvailability,
     createUser
 };
