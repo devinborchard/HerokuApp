@@ -1,7 +1,12 @@
 
-const {DBConnection} = require('../DataBaseConnection/DBConnection')
-const { sendNodeMailerEmail } = require('../handlers/emailHandler')
-const db = new DBConnection(process.env.DB_URI)
+const {DBConnection} = require('./DataBaseConnection/DBConnection')
+const { sendNodeMailerEmail } = require('./handlers/emailHandler')
+const { blackListTags } = require('./utils/blacklistTags')
+const db = new DBConnection(process.env.DB_CREDS.split(','))
+
+const fs = require('fs')
+
+
 
 const GetUser = async (req,res) => {
     let dbData = await db.getUserFromDb(req)
@@ -30,6 +35,7 @@ const createUser = async(req, res) => {
 const GetAvailability  = async (req,res) => {
     //res.send(200)
     let dbData = await db.checkCredsAvailableDb(req)
+    //console.log("DBDATA: ", dbData)
     let available = true
     if(dbData.length == 0){
         res.send({
@@ -46,7 +52,7 @@ const GetAvailability  = async (req,res) => {
                 console.log('flag1')
                 message = 'Email is already in use'
             }
-            if(user.user_name === req.body.username){
+            if(user.username === req.body.username){
                 console.log('flag2')
                 message = 'Username is taken'
             }
@@ -61,10 +67,50 @@ const GetAvailability  = async (req,res) => {
         }
     }
 }
+
+const GetRecipes = async(req, res) => {
+    console.log('BODY: ', req.body)
+    res.send(200)
+}
+
+const GetTags = async(req, res) => {
+    let rawTags = await db.getRecipeTagsFromDb()
+
+    uniqueTags = []
+    let tagsString = ''
+    for(let i = 0 ; i < rawTags.length; i++){
+        let tags = rawTags[i].tags
+        tags = tags.replaceAll('\'','"')
+        tags = JSON.parse(tags)
+
+        
+        
+        for(let j = 0 ; j < tags.length; j++){
+            if(!uniqueTags.includes(tags[j]) && !blackListTags.includes(tags[j])){
+            //if(!uniqueTags.includes(tags[j])){
+                tagsString = tagsString + `"${tags[j]}",` + '\n'
+                uniqueTags.push(tags[j])
+            }
+        }
+    }
+
+
+    fs.writeFile('alltags.txt', tagsString, (err) => {
+        // In case of a error throw err.
+        if (err) throw err;
+    })
+
+
+    res.send({
+        data: uniqueTags
+    })
+}
 //export function for router to send to index
 module.exports = {
     GetUser,
     sendEmail,
     GetAvailability,
-    createUser
+    createUser,
+    GetTags,
+    GetRecipes
 };
