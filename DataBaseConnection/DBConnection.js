@@ -57,6 +57,75 @@ class DBConnection{
     const result = await this.client.query(`SELECT tags FROM raw_recipes`)
     return result.rows
   }
+
+  //select in range
+  //SELECT * FROM table limit 100` -- get 1st 100 records
+  //SELECT * FROM table limit 100, 200` -- get 200 records beginning with row 101
+
+  getRecipesByTags = async(filters, index, limit) => {
+    console.log('IN DB CONNECTION: ', filters, index, limit)
+
+    let query
+    if(filters.length){
+      query = `SELECT * FROM raw_recipes WHERE`
+      for(let i = 0 ; i < filters.length; i++){
+        if(i > 0){
+          query = `${query} AND`
+        }
+        query = `${query} tags LIKE '%${filters[i]}%'`
+      }
+    }else{
+      query = `SELECT * FROM raw_recipes`
+    }
+    query = `${query} OFFSET ${index} LIMIT ${limit} `
+
+    console.log('QUERY: ', query)
+    const result = await this.client.query(query)
+
+    let formattedRows = []
+    console.log('GOT ',result.rows.length)
+    for(let i = 0; i < result.rows.length; i++){
+      let recipe = result.rows[i]
+      let steps = recipe.steps
+      steps = steps.replaceAll('"','\'')
+      steps = steps.replaceAll('[\'','["')
+      steps = steps.replaceAll('\']','"]')
+      steps = steps.replaceAll('\', \'','", "')
+      steps = steps.replaceAll('\', "','", "')
+      steps = steps.replaceAll('", \'','", "')
+      steps = JSON.parse(steps)
+      recipe.steps = steps
+
+      let ingredients = recipe.ingredients
+      ingredients = ingredients.replaceAll('[\'','["')
+      ingredients = ingredients.replaceAll('\']','"]')
+      ingredients = ingredients.replaceAll('\', \'','", "')
+      ingredients = ingredients.replaceAll('\', "','", "')
+      ingredients = ingredients.replaceAll('", \'','", "')
+      ingredients = JSON.parse(ingredients)
+
+      recipe.ingredients = ingredients
+
+      formattedRows[i] = recipe
+    }
+
+    let countQuery
+    if(filters.length){
+      query = `SELECT COUNT(name) FROM raw_recipes WHERE`
+      for(let i = 0 ; i < filters.length; i++){
+        if(i > 0){
+          query = `${query} AND`
+        }
+        query = `${query} tags LIKE '%${filters[i]}%'`
+      }
+    }else{
+      query = `SELECT COUNT(name) FROM raw_recipes`
+    }
+    const countResult = await this.client.query(query)
+    let queryFullCount = countResult.rows[0].count
+
+    return {formattedRows, queryFullCount}
+  }
 }
 
 module.exports = { 

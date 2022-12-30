@@ -69,8 +69,10 @@ const GetAvailability  = async (req,res) => {
 }
 
 const GetRecipes = async(req, res) => {
-    console.log('BODY: ', req.body)
-    res.send(200)
+    const {filters, limit, index} = req.body
+    let recipes = await db.getRecipesByTags(filters,index, limit)
+
+    res.send(recipes)
 }
 
 const GetTags = async(req, res) => {
