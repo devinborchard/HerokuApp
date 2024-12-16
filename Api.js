@@ -1,19 +1,25 @@
 
 const {DBConnection} = require('./DataBaseConnection/DBConnection')
-const { sendNodeMailerEmail } = require('./handlers/emailHandler')
-const { blackListTags } = require('./utils/blacklistTags')
-// const db = new DBConnection(process.env.DB_CREDS.split(','))
+// const { sendNodeMailerEmail } = require('./handlers/emailHandler')
+// const { blackListTags } = require('./utils/blacklistTags')
+const db = new DBConnection(process.env.DB_URI)
 
 const fs = require('fs')
 
 
 
-// const GetUser = async (req,res) => {
-//     let dbData = await db.getUserFromDb(req)
-//     res.send({
-//         data: dbData
-//     })
-// }
+const GetUser = async (req,res) => {
+    try{
+        let dbData = await db.getUserFromDb(req)
+        res.send({
+            data: dbData
+        })
+    }
+    catch(e){
+        console.error("Error getting user data: ", e)
+        res.sendStatus(500)
+    }
+}
 
 // const sendEmail = async(req, res) => {
 //     let emailed = await sendNodeMailerEmail(req.body)
@@ -135,8 +141,8 @@ const getJournalEntries = async(req, res) => {
 //export function for router to send to index
 module.exports = {
     saveJournalEntries,
-    getJournalEntries
-    // GetUser,
+    getJournalEntries,
+    GetUser,
     // sendEmail,
     // GetAvailability,
     // createUser,

@@ -1,1 +1,0 @@
-[{"entry":"...First","date":"12-14-2024","title":"Journal Entry 1","id":1},{"entry":"...","date":"12-14-2024","title":"Journal Entry 3","id":3}]
