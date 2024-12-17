@@ -5,17 +5,18 @@ const decodeBase64 = (encoded) => {
 
 const authMiddleware = (req, res, next) => {
     const auth = req.headers.authorization
+    // console.log("AUTH: ", auth)
     try{
         const key = decodeBase64(auth.substring(7,auth.length))
-        if (key===process.env.AUTH_KEY){
-            next()
+        if (key!=process.env.AUTH_KEY){
+            res.sendStatus(403)
         }
         else{
-            res.sendStatus(403)
+            next()
         }
     }
     catch(e){
-        res.sendStatus(402)
+        res.sendStatus(401)
     }
 }
 

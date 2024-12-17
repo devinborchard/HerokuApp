@@ -11,9 +11,7 @@ const fs = require('fs')
 const GetUser = async (req,res) => {
     try{
         let dbData = await db.getUserFromDb(req)
-        res.send({
-            data: dbData
-        })
+        res.send(dbData)
     }
     catch(e){
         console.error("Error getting user data: ", e)
@@ -31,29 +29,27 @@ const GetUser = async (req,res) => {
 
 // }
 
-const saveJournalEntries = async(req, res) => {
-    console.log("saveJournalEntries: ", req.body)
-    fs.writeFile('entries.txt', JSON.stringify(req.body), (err) => {
-        // In case of a error throw err.
-        if (err) throw err;
-    })
-    res.send({
-        data: 0
-    })
-}
+// const saveJournalEntries = async(req, res) => {
+//     console.log("saveJournalEntries: ", req.body)
+//     fs.writeFile('entries.txt', JSON.stringify(req.body), (err) => {
+//         // In case of a error throw err.
+//         if (err) throw err;
+//     })
+//     res.send({
+//         data: 0
+//     })
+// }
 
 const getJournalEntries = async(req, res) => {
-    let entries = ""
-    fs.readFile('entries.txt', 'utf8', function (err, data) {
-        const parsed = JSON.parse(data)
-        entries = parsed;
-        console.log("ENRIES: ", entries)
-
-        console.log("getJournalEntries")
-        res.send({
-            data: entries
-        })
-    });
+    // console.log("REQ: ", req)
+    try{
+        let dbData = await db.getJournalEntriesFromDb(req)
+        res.send(dbData)
+    }
+    catch(e){
+        console.error("Error getting journal data: ", e)
+        res.sendStatus(500)
+    }
 }
 
 // const createUser = async(req, res) => {
@@ -140,7 +136,7 @@ const getJournalEntries = async(req, res) => {
 // }
 //export function for router to send to index
 module.exports = {
-    saveJournalEntries,
+    // saveJournalEntries,
     getJournalEntries,
     GetUser,
     // sendEmail,

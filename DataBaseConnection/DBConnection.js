@@ -27,6 +27,12 @@ class DBConnection{
     if(result.rows.length > 1){
       throw new Error("Multiple Users Found")
     }
+    return result.rows[0]
+  }
+
+  getJournalEntriesFromDb = async(req) => {
+    const result = await this.client.query(`SELECT * FROM journals WHERE user_id='${req.query.user_id}'`)
+    // console.log("RES: ", result.rows)
     return result.rows
   }
   

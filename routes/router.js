@@ -1,7 +1,7 @@
 //endpoint funtions to import
 const {
     // GetUser, 
-    saveJournalEntries,
+    // saveJournalEntries,
     getJournalEntries,
     GetUser
 } = require('../Api.js')
@@ -18,7 +18,7 @@ router.post('/user', authMiddleware, GetUser)
 // router.post('/checkAvailable',GetAvailability)
 // router.post('/createUser',createUser)
 // router.post('/emailer',sendEmail)
-router.post('/saveJournalEntries', authMiddleware, saveJournalEntries)
+// router.post('/saveJournalEntries', authMiddleware, saveJournalEntries)
 
 // router.post('/recipes',GetRecipes)
 // router.get('/filterTags',GetTags)
