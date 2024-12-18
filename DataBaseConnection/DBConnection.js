@@ -1,3 +1,7 @@
+const {
+  dateToNumber,
+} = require('../utils/dates')
+
 const { Client } = require('pg')
 
 class DBConnection{
@@ -30,10 +34,72 @@ class DBConnection{
     return result.rows[0]
   }
 
+  checkUserName = async(req) => {
+    const result = await this.client.query(`SELECT * FROM users WHERE user_name='${req.body.user_name}'`)
+    // console.log("SQL: ",`SELECT * FROM users WHERE user_name='${req.body.user_name}'`)
+    // console.log("RES: ", result.rows)
+    if(result.rows.length != 0){
+      return false
+    }
+    return true
+  }
+
+  getNewUserId = async() => {
+    const result = await this.client.query(`SELECT user_id FROM users`)
+    const ids = result.rows.map(item => item.user_id);
+    // console.log("IDS: ", ids)
+    let newId = 1
+    while(ids.includes(newId)){
+      newId++
+    }
+    // console.log("NEW: ", newId)
+    return newId
+
+  }
+
+  createUser = async(req) => {
+    const nextUserId = await this.getNewUserId()
+    await this.client.query(`INSERT INTO users VALUES (${nextUserId}, '${req.body.name}', '${req.body.user_name}', '${req.body.password}', NULL)`)
+    // console.log("SQL: ",`SELECT * FROM users WHERE user_name='${req.body.user_name}'`)
+    // console.log("RES: ", result.rows)
+    return nextUserId
+  }
+
   getJournalEntriesFromDb = async(req) => {
     const result = await this.client.query(`SELECT * FROM journals WHERE user_id='${req.query.user_id}'`)
     // console.log("RES: ", result.rows)
-    return result.rows
+    
+    let rows = result.rows
+
+    rows.sort(function(a, b) { 
+      return dateToNumber(b.journal_date) - dateToNumber(a.journal_date);
+    })
+    // rows.sort(function(a, b) { 
+    //   return b.journal_id - a.journal_id;
+    // })
+    return rows
+  }
+
+  saveJournalEntriesToDb = async(req) => {
+    const existingExtry = await this.client.query(`SELECT * FROM journals WHERE user_id=${req.body.user_id} AND journal_id=${req.body.journal_id}`)
+    const existingExtryRow = existingExtry.rows
+    // console.log("SAVING: ", req.body)
+    // console.log("EXISSITNG: ", existingExtryRow)
+    if(existingExtryRow.length > 1){
+      throw new Error("Multiple Journal Entries Found")
+    }
+
+    if(existingExtryRow.length == 1 ){
+      await this.client.query(`UPDATE journals SET journal_title='${req.body.journal_title}', journal_entry='${req.body.journal_entry}', journal_date='${req.body.journal_date}' WHERE user_id=${req.body.user_id} AND journal_id=${req.body.journal_id}`)
+    }
+    else{
+      // console.log("ADDING")
+      await this.client.query(`INSERT INTO journals VALUES (${req.body.journal_id}, '${req.body.journal_title}', '${req.body.journal_entry}', '${req.body.journal_date}', ${req.body.user_id})`)
+    }
+  }
+
+  deleteJournalEntryFromDb = async(req) => {
+    await this.client.query(`DELETE FROM journals WHERE journal_id='${req.query.journal_id}'`)
   }
   
 //   createUserInDB = async(req) => {

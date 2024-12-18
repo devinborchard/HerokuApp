@@ -19,6 +19,27 @@ const GetUser = async (req,res) => {
     }
 }
 
+const checkUsername = async (req,res) => {
+    try{
+        let dbData = await db.checkUserName(req)
+        res.send(dbData)
+    }
+    catch(e){
+        console.error("Error getting userName data: ", e)
+        res.sendStatus(500)
+    }
+}
+
+const createUser = async (req,res) => {
+    try{
+        let user_id = await db.createUser(req)
+        res.send({user_id})
+    }
+    catch(e){
+        console.error("Error creating user data: ", e)
+        res.sendStatus(500)
+    }
+}
 // const sendEmail = async(req, res) => {
 //     let emailed = await sendNodeMailerEmail(req.body)
 //     if(emailed){
@@ -29,16 +50,27 @@ const GetUser = async (req,res) => {
 
 // }
 
-// const saveJournalEntries = async(req, res) => {
-//     console.log("saveJournalEntries: ", req.body)
-//     fs.writeFile('entries.txt', JSON.stringify(req.body), (err) => {
-//         // In case of a error throw err.
-//         if (err) throw err;
-//     })
-//     res.send({
-//         data: 0
-//     })
-// }
+const saveJournalEntry = async(req, res) => {
+    try{
+        db.saveJournalEntriesToDb(req)
+        res.sendStatus(200)
+    }
+    catch(e){
+        console.error("Error getting journal data: ", e)
+        res.sendStatus(500)
+    }
+}
+
+const deleteJournalEntry = async(req, res) => {
+    try{
+        db.deleteJournalEntryFromDb(req)
+        res.sendStatus(200)
+    }
+    catch(e){
+        console.error("Error deleting journal entry: ", e)
+        res.sendStatus(500)
+    }
+}
 
 const getJournalEntries = async(req, res) => {
     // console.log("REQ: ", req)
@@ -136,9 +168,12 @@ const getJournalEntries = async(req, res) => {
 // }
 //export function for router to send to index
 module.exports = {
-    // saveJournalEntries,
+    saveJournalEntry,
     getJournalEntries,
     GetUser,
+    deleteJournalEntry,
+    checkUsername,
+    createUser
     // sendEmail,
     // GetAvailability,
     // createUser,
